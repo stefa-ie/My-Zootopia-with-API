@@ -28,7 +28,7 @@ def update_html(animal_name):
         return
 
     output = ''
-    animals = animal_data if isinstance(animal_data, list) else list(animal_data)
+    animals = animal_data if isinstance(animal_data, list) else [animal_data]
     for animal in animals:
         output += animal_card(animal)
 
