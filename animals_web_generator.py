@@ -5,15 +5,26 @@ def animal_card(animal_obj):
     """Generates an HTML card for a single animal object."""
     output = ""
     output += '<li class="cards__item">\n'
-    if 'name' in animal_obj:
-        output += f"<div class='card__title'>{animal_obj['name']}</div><br/>\n"
+    
+    # Always show name if available, otherwise show a default
+    name = animal_obj.get('name', 'Unknown Animal')
+    output += f"<div class='card__title'>{name}</div><br/>\n"
+    
     output += "<p class='card__text'>\n"
-    if 'characteristics' in animal_obj and 'diet' in animal_obj['characteristics']:
-        output += f"<strong>Diet:</strong> {animal_obj['characteristics']['diet']}<br/>\n"
-    if 'locations' in animal_obj and animal_obj['locations']:
-        output += f"<strong>Location:</strong> {animal_obj['locations'][0]}<br/>\n"
-    if 'characteristics' in animal_obj and 'type' in animal_obj['characteristics']:
-        output += f"<strong>Type:</strong> {animal_obj['characteristics']['type']}<br/>\n"
+    
+    # Check for characteristics
+    characteristics = animal_obj.get('characteristics', {})
+    if isinstance(characteristics, dict):
+        if 'diet' in characteristics:
+            output += f"<strong>Diet:</strong> {characteristics['diet']}<br/>\n"
+        if 'type' in characteristics:
+            output += f"<strong>Type:</strong> {characteristics['type']}<br/>\n"
+    
+    # Check for locations
+    locations = animal_obj.get('locations', [])
+    if locations and isinstance(locations, list) and len(locations) > 0:
+        output += f"<strong>Location:</strong> {locations[0]}<br/>\n"
+    
     output += '</p>\n'
     output += '</li>\n'
     return output
@@ -28,9 +39,28 @@ def update_html(animal_name):
         return
 
     output = ''
-    animals = animal_data if isinstance(animal_data, list) else [animal_data]
+    # Handle different response formats
+    if isinstance(animal_data, list):
+        animals = animal_data
+    elif isinstance(animal_data, dict):
+        # If it's a single dict, wrap it in a list
+        animals = [animal_data]
+    else:
+        # Fallback: try to iterate if it's iterable
+        animals = list(animal_data) if hasattr(animal_data, '__iter__') else []
+    
+    if not animals:
+        print(f"Warning: No animal data to display for '{animal_name}'.")
+        return
+    
     for animal in animals:
-        output += animal_card(animal)
+        if isinstance(animal, dict):
+            output += animal_card(animal)
+    
+    # Ensure we have content to display
+    if not output.strip():
+        print(f"Warning: No valid animal data could be processed for '{animal_name}'.")
+        return
 
     # Get the directory where this script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
