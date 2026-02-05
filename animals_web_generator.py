@@ -16,12 +16,16 @@ def animal_card(animal_obj):
     if 'name' in animal_obj:
         output += f"<div class='card__title'>{animal_obj['name']}</div><br/>\n"
     output += "<p class='card__text'>\n"
-    if 'characteristics' in animal_obj and 'diet' in animal_obj['characteristics']:
-        output += f"<strong>Diet:</strong> {animal_obj['characteristics']['diet']}<br/>\n"
+    if ('characteristics' in animal_obj
+            and 'diet' in animal_obj['characteristics']):
+        diet = animal_obj['characteristics']['diet']
+        output += f"<strong>Diet:</strong> {diet}<br/>\n"
     if 'locations' in animal_obj and animal_obj['locations']:
         output += f"<strong>Location:</strong> {animal_obj['locations'][0]}<br/>\n"
-    if 'characteristics' in animal_obj and 'type' in animal_obj['characteristics']:
-        output += f"<strong>Type:</strong> {animal_obj['characteristics']['type']}<br/>\n"
+    if ('characteristics' in animal_obj
+            and 'type' in animal_obj['characteristics']):
+        animal_type = animal_obj['characteristics']['type']
+        output += f"<strong>Type:</strong> {animal_type}<br/>\n"
     output += '</p>\n'
     output += '</li>\n'
     return output
@@ -40,15 +44,18 @@ def update_html(animal_name):
     animal_data = data_fetcher.fetch_data(animal_name)
 
     if not animal_data:
-        # Generate a user-friendly message for the website when animal is not found
-        output = f'''<li class="cards__item">
-        <div class="card__title">Animal Not Found</div>
-        <p class="card__text">
-        Sorry, we couldn't find any information about "<strong>{animal_name}</strong>".<br/>
-        Please check the spelling and try again with a new input.
-        </p>
-        </li>
-        '''
+        # Generate a user-friendly message for the website
+        # when animal is not found
+        output = (
+            '<li class="cards__item">\n'
+            '<div class="card__title">Animal Not Found</div>\n'
+            '<p class="card__text">\n'
+            f'Sorry, we couldn\'t find any information about '
+            f'"<strong>{animal_name}</strong>".<br/>\n'
+            'Please check the spelling and try again with a new input.\n'
+            '</p>\n'
+            '</li>\n'
+        )
     else:
         output = ''
         animals = animal_data if isinstance(animal_data, list) else [animal_data]
@@ -69,7 +76,8 @@ def update_html(animal_name):
         file.write(updated_content)
 
     if animal_data:
-        print(f"Created/Updated {animal_name}.html with information about {animal_name}.")
+        print(f"Created/Updated {animal_name}.html "
+              f"with information about {animal_name}.")
     else:
         print(f"Created {animal_name}.html with a 'not found' message.")
 
