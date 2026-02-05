@@ -24,59 +24,38 @@ def update_html(animal_name):
     animal_data = data_fetcher.fetch_data(animal_name)
 
     if not animal_data:
-        print(f"No data found for '{animal_name}'.")
-        return
-
-    output = ''
-    # Handle different response formats
-    if isinstance(animal_data, list):
-        animals = animal_data
-    elif isinstance(animal_data, dict):
-        animals = [animal_data]
+        # Generate a user-friendly message for the website when animal is not found
+        output = f'''<li class="cards__item">
+        <div class="card__title">Animal Not Found</div>
+        <p class="card__text">
+        Sorry, we couldn't find any information about "<strong>{animal_name}</strong>".<br/>
+        Please check the spelling and try again with a new input.
+        </p>
+        </li>
+        '''
     else:
-        animals = []
-    
-    # Check if we have any animals to display
-    if not animals:
-        print(f"No animal data to display for '{animal_name}'.")
-        return
-    
-    for animal in animals:
-        if isinstance(animal, dict):
+        output = ''
+        animals = animal_data if isinstance(animal_data, list) else [animal_data]
+        for animal in animals:
             output += animal_card(animal)
-    
-    # Ensure we generated some content
-    if not output.strip():
-        print(f"Warning: Generated HTML is empty for '{animal_name}'. Check API response structure.")
-        return
 
     # Get the directory where this script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
     template_path = os.path.join(script_dir, 'animals_template.html')
     
-    with open(template_path, 'r', encoding='utf-8') as file:
+    with open(template_path, 'r') as file:
         content = file.read()
 
-    # Replace the marker - handle with or without surrounding whitespace
-    if '__REPLACE_ANIMALS_INFO__' not in content:
-        print(f"Error: Replacement marker '__REPLACE_ANIMALS_INFO__' not found in template!")
-        return
-    
     updated_content = content.replace('__REPLACE_ANIMALS_INFO__', output)
-    
-    # Debug: Check if replacement worked
-    if '__REPLACE_ANIMALS_INFO__' in updated_content:
-        print(f"Warning: Replacement marker not found or replacement failed!")
-        print(f"Generated output length: {len(output)} characters")
-    else:
-        print(f"Successfully replaced content. Generated {len(animals)} animal card(s).")
 
     output_path = os.path.join(script_dir, f'{animal_name}.html')
-    with open(output_path, 'w', encoding='utf-8') as file:
+    with open(output_path, 'w') as file:
         file.write(updated_content)
 
-    print(f"Created/Updated {animal_name}.html at: {output_path}")
-    print(f"File size: {os.path.getsize(output_path)} bytes")
+    if animal_data:
+        print(f"Created/Updated {animal_name}.html with information about {animal_name}.")
+    else:
+        print(f"Created {animal_name}.html with a 'not found' message.")
 
 
 def main():
