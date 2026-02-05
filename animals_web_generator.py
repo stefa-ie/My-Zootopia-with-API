@@ -2,7 +2,15 @@ import data_fetcher
 import os
 
 def animal_card(animal_obj):
-    """Generates an HTML card for a single animal object."""
+    """Generate an HTML card for a single animal.
+
+    Args:
+        animal_obj: A dictionary containing animal data with keys such as
+            'name', 'characteristics', and 'locations'.
+
+    Returns:
+        A string containing the HTML markup for the animal card.
+    """
     output = ""
     output += '<li class="cards__item">\n'
     if 'name' in animal_obj:
@@ -20,7 +28,15 @@ def animal_card(animal_obj):
 
 
 def update_html(animal_name):
-    """Fetches animal data from API and updates/creates HTML file."""
+    """Fetch animal data from API and generate an HTML file.
+
+    Retrieves animal information using the data_fetcher module and creates
+    an HTML file using the template. If the animal is not found, generates
+    a page with a user-friendly error message.
+
+    Args:
+        animal_name: The name of the animal to search for.
+    """
     animal_data = data_fetcher.fetch_data(animal_name)
 
     if not animal_data:
@@ -59,6 +75,11 @@ def update_html(animal_name):
 
 
 def main():
+    """Run the animal web generator application.
+
+    Prompts the user to enter an animal name and generates an HTML page
+    with information about that animal.
+    """
     animal_name = input("Please enter an animal: ")
     update_html(animal_name)
 
